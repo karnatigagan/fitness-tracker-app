@@ -1,38 +1,45 @@
-import pandas as pd
 from datetime import datetime
-import os
+from models import get_db, Workout, Goal
+from sqlalchemy.orm import Session
+from contextlib import contextmanager
+
+@contextmanager
+def get_db_context():
+    db = next(get_db())
+    try:
+        yield db
+    finally:
+        db.close()
 
 def load_workout_data():
-    """Load workout data from CSV file"""
-    if not os.path.exists('workouts.csv'):
-        return pd.DataFrame(columns=['date', 'exercise', 'duration', 'intensity'])
-    return pd.read_csv('workouts.csv')
+    """Load workout data from database"""
+    with get_db_context() as db:
+        return db.query(Workout).all()
 
 def save_workout(exercise, duration, intensity):
-    """Save workout data to CSV file"""
-    df = load_workout_data()
-    new_workout = pd.DataFrame({
-        'date': [datetime.now().strftime('%Y-%m-%d')],
-        'exercise': [exercise],
-        'duration': [duration],
-        'intensity': [intensity]
-    })
-    df = pd.concat([df, new_workout], ignore_index=True)
-    df.to_csv('workouts.csv', index=False)
+    """Save workout data to database"""
+    with get_db_context() as db:
+        new_workout = Workout(
+            exercise=exercise,
+            duration=duration,
+            intensity=intensity,
+            date=datetime.now().date()
+        )
+        db.add(new_workout)
+        db.commit()
 
 def load_goals():
-    """Load goals from CSV file"""
-    if not os.path.exists('goals.csv'):
-        return pd.DataFrame(columns=['exercise', 'target_duration', 'target_intensity'])
-    return pd.read_csv('goals.csv')
+    """Load goals from database"""
+    with get_db_context() as db:
+        return db.query(Goal).all()
 
 def save_goal(exercise, target_duration, target_intensity):
-    """Save goal to CSV file"""
-    df = load_goals()
-    new_goal = pd.DataFrame({
-        'exercise': [exercise],
-        'target_duration': [target_duration],
-        'target_intensity': [target_intensity]
-    })
-    df = pd.concat([df, new_goal], ignore_index=True)
-    df.to_csv('goals.csv', index=False)
+    """Save goal to database"""
+    with get_db_context() as db:
+        new_goal = Goal(
+            exercise=exercise,
+            target_duration=target_duration,
+            target_intensity=target_intensity
+        )
+        db.add(new_goal)
+        db.commit()
