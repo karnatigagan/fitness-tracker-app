@@ -50,14 +50,14 @@ TWILIO_PHONE_NUMBER=your_twilio_phone
 ```
 
 ### PostgreSQL Database
-By default, the app uses SQLite. To use PostgreSQL:
+By default, the app uses SQLite which requires no setup. To use PostgreSQL instead:
 
 1. Install PostgreSQL dependencies:
 ```bash
 pip install psycopg2-binary
 ```
 
-2. Add your database URL to `.env`:
+2. Set the DATABASE_URL environment variable:
 ```
 DATABASE_URL=postgresql://user:password@host:port/dbname
 ```
@@ -77,3 +77,5 @@ Feel free to open issues or submit pull requests to help improve the application
 ## License
 
 MIT License
+```
+</replit_final_file>
