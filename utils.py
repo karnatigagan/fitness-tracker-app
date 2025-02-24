@@ -5,6 +5,7 @@ from contextlib import contextmanager
 
 @contextmanager
 def get_db_context():
+    """Get database session context"""
     db = next(get_db())
     try:
         yield db
