@@ -1,0 +1,39 @@
+/* Mobile-first styles */
+div.stButton > button {
+    width: 100%;
+    border-radius: 20px;
+    height: 3em;
+    margin: 10px 0;
+}
+
+.stSelectbox {
+    margin: 10px 0;
+}
+
+.stNumberInput {
+    margin: 10px 0;
+}
+
+/* Custom card styling */
+.css-1r6slb0 {
+    background-color: #ffffff;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Progress bar styling */
+.stProgress > div > div {
+    border-radius: 10px;
+}
+
+/* Mobile optimization */
+@media (max-width: 768px) {
+    .stApp {
+        padding: 1rem;
+    }
+    
+    .css-1r6slb0 {
+        padding: 15px;
+    }
+}
