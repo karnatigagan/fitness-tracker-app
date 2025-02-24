@@ -2,6 +2,7 @@ import streamlit as st
 from utils import save_goal, load_goals, load_workout_data
 import pandas as pd
 from datetime import datetime, timedelta
+from components.notification_settings import render_notification_settings
 
 def render_goals():
     """Render the goals section"""
@@ -71,3 +72,7 @@ def render_goals():
                 else:
                     st.progress(0)
                     st.write("No recent workouts logged")
+
+    # Add notification settings section
+    st.markdown("---")
+    render_notification_settings()
