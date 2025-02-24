@@ -4,18 +4,25 @@ from datetime import datetime, timedelta
 from models import User, Workout, Goal
 from utils import get_db_context
 
-# Twilio configuration
-TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
-TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
-TWILIO_PHONE_NUMBER = os.getenv("TWILIO_PHONE_NUMBER")
-
 def send_sms(phone_number: str, message: str) -> bool:
-    """Send SMS using Twilio"""
+    """Send SMS using Twilio if configured"""
     try:
-        client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+        # Only attempt to send if Twilio is configured
+        if not all([
+            os.getenv("TWILIO_ACCOUNT_SID"),
+            os.getenv("TWILIO_AUTH_TOKEN"),
+            os.getenv("TWILIO_PHONE_NUMBER")
+        ]):
+            print("Twilio not configured, skipping SMS send")
+            return False
+
+        client = Client(
+            os.getenv("TWILIO_ACCOUNT_SID"),
+            os.getenv("TWILIO_AUTH_TOKEN")
+        )
         message = client.messages.create(
             body=message,
-            from_=TWILIO_PHONE_NUMBER,
+            from_=os.getenv("TWILIO_PHONE_NUMBER"),
             to=phone_number
         )
         return True
@@ -24,7 +31,7 @@ def send_sms(phone_number: str, message: str) -> bool:
         return False
 
 def send_workout_reminder(user_id: int) -> None:
-    """Send workout reminder to user"""
+    """Send workout reminder to user if notifications enabled"""
     with get_db_context() as db:
         user = db.query(User).filter(User.id == user_id).first()
         if user and user.notifications_enabled:

@@ -8,17 +8,9 @@ import sqlite3
 # Default to SQLite database
 DATABASE_URL = 'sqlite:///fitness_tracker.db'
 
-# Only try to use PostgreSQL if explicitly configured
-if os.getenv('DATABASE_URL'):
-    try:
-        engine = create_engine(os.getenv('DATABASE_URL'))
-        print("Using PostgreSQL database")
-    except Exception as e:
-        print(f"Failed to connect to PostgreSQL, using SQLite instead: {str(e)}")
-        engine = create_engine(DATABASE_URL)
-else:
-    engine = create_engine(DATABASE_URL)
-    print("Using SQLite database")
+# Create database engine
+engine = create_engine(DATABASE_URL)
+print("Using SQLite database")
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()

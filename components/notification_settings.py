@@ -18,8 +18,9 @@ def render_notification_settings():
     twilio_configured = check_twilio_config()
 
     if not twilio_configured:
-        st.warning(
-            "SMS notifications are currently disabled. To enable them, you'll need to set up Twilio:"
+        st.info(
+            "SMS notifications are currently disabled. They're optional and can be enabled later by setting up Twilio."
+            "\n\nTo enable notifications:"
             "\n1. Create a free Twilio account at twilio.com"
             "\n2. Get your Account SID, Auth Token, and Phone Number"
             "\n3. Add them to your environment variables"
