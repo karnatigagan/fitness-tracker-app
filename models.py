@@ -4,24 +4,26 @@ from sqlalchemy.orm import sessionmaker
 import os
 from datetime import datetime
 from dotenv import load_dotenv
+import sqlite3
 
-# Load environment variables from .env file
-load_dotenv()
+# Try to load environment variables, but don't fail if .env doesn't exist
+try:
+    load_dotenv()
+except:
+    pass
 
-# Get database URL from environment
-DATABASE_URL = os.getenv('DATABASE_URL')
-
-if not DATABASE_URL:
-    raise EnvironmentError(
-        "DATABASE_URL not found. Please create a .env file with your database configuration."
-    )
+# Get database URL from environment or use SQLite as default
+DATABASE_URL = os.getenv('DATABASE_URL', 'sqlite:///fitness_tracker.db')
 
 try:
     # Create database engine
     engine = create_engine(DATABASE_URL)
     SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 except Exception as e:
-    raise Exception(f"Failed to connect to database: {str(e)}")
+    print(f"Warning: Failed to connect to PostgreSQL: {str(e)}")
+    print("Falling back to SQLite database")
+    engine = create_engine('sqlite:///fitness_tracker.db')
+    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
 
@@ -30,7 +32,7 @@ class User(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     phone_number = Column(String, unique=True)
-    notifications_enabled = Column(Boolean, default=True)
+    notifications_enabled = Column(Boolean, default=False)  # Default to False
     reminder_time = Column(String)  # Format: "HH:MM"
 
 class Workout(Base):
@@ -64,7 +66,7 @@ def init_db():
         Base.metadata.create_all(bind=engine)
         print("Database tables created successfully")
     except Exception as e:
-        raise Exception(f"Failed to create database tables: {str(e)}")
+        print(f"Warning: Failed to create database tables: {str(e)}")
 
 # Create all tables
 init_db()

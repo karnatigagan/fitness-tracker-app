@@ -3,10 +3,28 @@ from datetime import datetime
 from models import User
 from utils import get_db_context
 from notifications import send_sms
+import os
+
+def check_twilio_config():
+    """Check if Twilio is configured"""
+    required_vars = ['TWILIO_ACCOUNT_SID', 'TWILIO_AUTH_TOKEN', 'TWILIO_PHONE_NUMBER']
+    return all(os.getenv(var) for var in required_vars)
 
 def render_notification_settings():
     """Render notification settings UI"""
     st.subheader("📱 Notification Settings")
+
+    # Check if Twilio is configured
+    twilio_configured = check_twilio_config()
+
+    if not twilio_configured:
+        st.warning(
+            "SMS notifications are currently disabled. To enable them, you'll need to set up Twilio:"
+            "\n1. Create a free Twilio account at twilio.com"
+            "\n2. Get your Account SID, Auth Token, and Phone Number"
+            "\n3. Add them to your environment variables"
+        )
+        return
 
     with get_db_context() as db:
         # Get or create user (using a placeholder ID=1 for now)

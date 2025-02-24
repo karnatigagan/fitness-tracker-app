@@ -9,7 +9,7 @@ A mobile-optimized web application for tracking your fitness journey, built with
 - 🎯 Goal setting and progress tracking
 - 📱 Mobile-friendly interface
 - 🔄 Apple Health data import
-- 📲 SMS notifications for workout reminders
+- 📲 Optional SMS notifications for workout reminders
 
 ## Quick Start
 
@@ -21,38 +21,45 @@ cd fitness-tracker-app
 
 2. Install required packages:
 ```bash
-pip install streamlit pandas plotly sqlalchemy psycopg2-binary python-dotenv twilio
+pip install streamlit pandas plotly sqlalchemy
 ```
 
-3. Set up environment variables:
-Create a `.env` file in the project root with:
+3. Run the app:
+```bash
+python run.py
 ```
-DATABASE_URL=postgresql://user:password@host:port/dbname
+
+The app will start automatically and be accessible at `http://localhost:5000`
+
+## Optional Features
+
+### SMS Notifications
+To enable SMS notifications, install additional dependencies and set up Twilio:
+
+1. Install Twilio:
+```bash
+pip install twilio python-dotenv
+```
+
+2. Create a free account at [twilio.com](https://www.twilio.com)
+3. Create a `.env` file with your Twilio credentials:
+```
 TWILIO_ACCOUNT_SID=your_twilio_sid
 TWILIO_AUTH_TOKEN=your_twilio_token
 TWILIO_PHONE_NUMBER=your_twilio_phone
 ```
 
-4. Run the app:
+### PostgreSQL Database
+By default, the app uses SQLite. To use PostgreSQL:
+
+1. Install PostgreSQL dependencies:
 ```bash
-streamlit run main.py
+pip install psycopg2-binary
 ```
 
-The app will open in your default browser at `http://localhost:8501`
-
-## Project Structure
-
+2. Add your database URL to `.env`:
 ```
-├── components/           # UI components
-│   ├── workout_form.py  # Workout logging form
-│   ├── progress_charts.py # Progress visualization
-│   ├── goals.py         # Goals management
-│   ├── health_import.py # Apple Health import
-│   └── notification_settings.py # SMS notifications
-├── models.py            # Database models
-├── utils.py            # Utility functions
-├── main.py             # Main application
-└── styles.css          # Custom styles
+DATABASE_URL=postgresql://user:password@host:port/dbname
 ```
 
 ## Usage
@@ -61,7 +68,7 @@ The app will open in your default browser at `http://localhost:8501`
 2. **Track Progress**: View your progress charts in the "Progress" tab
 3. **Set Goals**: Create and monitor fitness goals in the "Goals" tab
 4. **Import Health Data**: Import your workouts from Apple Health
-5. **Enable Notifications**: Set up SMS reminders in the Goals tab
+5. **Enable Notifications**: Set up optional SMS reminders in the Goals tab
 
 ## Contributing
 
