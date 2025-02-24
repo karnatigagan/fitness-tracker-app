@@ -3,13 +3,25 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import os
 from datetime import datetime
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Get database URL from environment
 DATABASE_URL = os.getenv('DATABASE_URL')
 
-# Create database engine
-engine = create_engine(DATABASE_URL)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+if not DATABASE_URL:
+    raise EnvironmentError(
+        "DATABASE_URL not found. Please create a .env file with your database configuration."
+    )
+
+try:
+    # Create database engine
+    engine = create_engine(DATABASE_URL)
+    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+except Exception as e:
+    raise Exception(f"Failed to connect to database: {str(e)}")
 
 Base = declarative_base()
 
@@ -46,8 +58,16 @@ class Goal(Base):
     target_intensity = Column(Integer)  # 1-10 scale
     user_id = Column(Integer, ForeignKey("users.id"))
 
+def init_db():
+    """Initialize the database tables"""
+    try:
+        Base.metadata.create_all(bind=engine)
+        print("Database tables created successfully")
+    except Exception as e:
+        raise Exception(f"Failed to create database tables: {str(e)}")
+
 # Create all tables
-Base.metadata.create_all(bind=engine)
+init_db()
 
 def get_db():
     """Get database session"""
