@@ -14,7 +14,8 @@ def get_db_context():
 def load_workout_data():
     """Load workout data from database"""
     with get_db_context() as db:
-        return db.query(Workout).all()
+        # For now, use user_id=1 as default
+        return db.query(Workout).filter(Workout.user_id == 1).all()
 
 def save_workout(exercise, duration, intensity):
     """Save workout data to database"""
@@ -23,7 +24,8 @@ def save_workout(exercise, duration, intensity):
             exercise=exercise,
             duration=duration,
             intensity=intensity,
-            date=datetime.now().date()
+            date=datetime.now().date(),
+            user_id=1  # Default user_id
         )
         db.add(new_workout)
         db.commit()
@@ -31,7 +33,8 @@ def save_workout(exercise, duration, intensity):
 def load_goals():
     """Load goals from database"""
     with get_db_context() as db:
-        return db.query(Goal).all()
+        # For now, use user_id=1 as default
+        return db.query(Goal).filter(Goal.user_id == 1).all()
 
 def save_goal(exercise, target_duration, target_intensity):
     """Save goal to database"""
@@ -39,7 +42,8 @@ def save_goal(exercise, target_duration, target_intensity):
         new_goal = Goal(
             exercise=exercise,
             target_duration=target_duration,
-            target_intensity=target_intensity
+            target_intensity=target_intensity,
+            user_id=1  # Default user_id
         )
         db.add(new_goal)
         db.commit()
