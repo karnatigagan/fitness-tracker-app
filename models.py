@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String, Float, Date, ForeignKey, Boolean
+from sqlalchemy import create_engine, Column, Integer, String, Float, Date, ForeignKey, Boolean, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import os
@@ -30,6 +30,12 @@ class Workout(Base):
     duration = Column(Integer)  # in minutes
     intensity = Column(Integer)  # 1-10 scale
     user_id = Column(Integer, ForeignKey("users.id"))
+    source = Column(String, default="manual")  # 'manual', 'apple_health'
+    external_id = Column(String, nullable=True)  # ID from external source
+    calories = Column(Float, nullable=True)
+    distance = Column(Float, nullable=True)  # in meters
+    start_time = Column(DateTime, nullable=True)
+    end_time = Column(DateTime, nullable=True)
 
 class Goal(Base):
     __tablename__ = "goals"

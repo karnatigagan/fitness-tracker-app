@@ -1,5 +1,5 @@
 from datetime import datetime
-from models import get_db, Workout, Goal
+from models import get_db, Workout, Goal, User
 from sqlalchemy.orm import Session
 from contextlib import contextmanager
 
@@ -25,10 +25,43 @@ def save_workout(exercise, duration, intensity):
             duration=duration,
             intensity=intensity,
             date=datetime.now().date(),
-            user_id=1  # Default user_id
+            user_id=1,  # Default user_id
+            source='manual'
         )
         db.add(new_workout)
         db.commit()
+
+def save_imported_workout(workout_data):
+    """Save imported workout data to database"""
+    try:
+        with get_db_context() as db:
+            # Check if workout already exists
+            existing = db.query(Workout).filter(
+                Workout.external_id == workout_data['external_id']
+            ).first()
+
+            if existing:
+                return False  # Skip duplicates
+
+            new_workout = Workout(
+                exercise=workout_data['exercise'],
+                duration=workout_data['duration'],
+                intensity=7,  # Default intensity for imported workouts
+                date=workout_data['start_time'].date(),
+                start_time=workout_data['start_time'],
+                end_time=workout_data['end_time'],
+                calories=workout_data['calories'],
+                distance=workout_data['distance'],
+                source=workout_data['source'],
+                external_id=workout_data['external_id'],
+                user_id=1  # Default user_id
+            )
+            db.add(new_workout)
+            db.commit()
+            return True
+    except Exception as e:
+        print(f"Error saving imported workout: {str(e)}")
+        return False
 
 def load_goals():
     """Load goals from database"""
